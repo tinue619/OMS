@@ -3,6 +3,10 @@ import { store } from './core/Store.js';
 import { router } from './core/Router.js';
 import { authModule } from './modules/AuthModule.js';
 import { dataModule } from './modules/DataModule.js';
+import { orderModule } from './modules/OrderModule.js';
+import { processModule } from './modules/ProcessModule.js';
+import { userModule } from './modules/UserModule.js';
+import { ProcessBoard } from './components/ProcessBoard.js';
 import { EVENTS, APP_CONFIG } from './utils/constants.js';
 
 /**
@@ -73,6 +77,9 @@ class App {
         // Модули уже создаются при импорте и сами себя инициализируют
         this.modules.set('auth', authModule);
         this.modules.set('data', dataModule);
+        this.modules.set('order', orderModule);
+        this.modules.set('process', processModule);
+        this.modules.set('user', userModule);
         
         console.log('✅ Модули зарегистрированы:', Array.from(this.modules.keys()));
     }
@@ -139,6 +146,11 @@ class App {
         eventBus.on(EVENTS.ERROR, (error) => {
             console.error('❌ Ошибка приложения:', error);
             this.showNotification('error', error.message || 'Произошла ошибка');
+        });
+
+        // Обработка уведомлений
+        eventBus.on(EVENTS.NOTIFICATION_SHOW, (notification) => {
+            this.showNotification(notification.type, notification.message, notification.duration);
         });
 
         // Глобальные обработчики
@@ -373,20 +385,17 @@ class App {
     showOrders() {
         this.setMainContent(`
             <div class="orders-view">
-                <div class="d-flex justify-between items-center" style="margin-bottom: 2rem;">
-                    <h2>Заказы</h2>
-                    <button class="btn btn-primary" onclick="app.showCreateOrderModal()">
-                        Создать заказ
-                    </button>
-                </div>
-                <div id="processBoard" class="process-board">
-                    <div class="loading-spinner"></div>
-                    <p class="text-center">Загрузка заказов...</p>
-                </div>
+                <div id="processBoardContainer"></div>
             </div>
         `);
         
-        this.loadOrdersBoard();
+        // Создаем компонент доски процессов
+        const container = document.getElementById('processBoardContainer');
+        if (container) {
+            const processBoard = new ProcessBoard(container);
+            // Сохраняем ссылку для очистки
+            this.currentView = processBoard;
+        }
     }
 
     showProcesses() {
@@ -601,8 +610,17 @@ class App {
         });
     }
 
+    /**
+     * Выход из системы
+     */
     async logout() {
         try {
+            // Очищаем текущий вид
+            if (this.currentView && this.currentView.destroy) {
+                this.currentView.destroy();
+                this.currentView = null;
+            }
+            
             await authModule.logout();
         } catch (error) {
             console.error('Ошибка выхода:', error);
@@ -667,9 +685,21 @@ class App {
         };
     }
 
-    showCreateOrderModal() {
-        // Заглушка для создания заказа
-        this.showNotification('info', 'Функция создания заказа будет реализована в следующих компонентах');
+    /**
+     * Выход из системы
+     */
+    async logout() {
+        try {
+            // Очищаем текущий вид
+            if (this.currentView && this.currentView.destroy) {
+                this.currentView.destroy();
+                this.currentView = null;
+            }
+            
+            await authModule.logout();
+        } catch (error) {
+            console.error('Ошибка выхода:', error);
+        }
     }
 
     async createDemoDataIfNeeded() {
