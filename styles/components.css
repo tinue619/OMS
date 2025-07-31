@@ -546,6 +546,62 @@
     border: 2px dashed var(--primary-color);
 }
 
+/* Контекстное меню */
+.context-menu {
+    position: fixed;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-2) 0;
+    min-width: 150px;
+    z-index: var(--z-dropdown);
+}
+
+.context-menu-item {
+    padding: var(--spacing-2) var(--spacing-4);
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: var(--transition);
+    font-size: var(--font-size-sm);
+}
+
+.context-menu-item:hover {
+    background-color: var(--bg-secondary);
+}
+
+.context-menu-item.danger {
+    color: var(--danger-color);
+}
+
+.context-menu-item.danger:hover {
+    background-color: var(--danger-light);
+}
+
+.context-menu-separator {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: var(--spacing-2) 0;
+}
+
+/* Иконочные кнопки */
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--spacing-1);
+    border-radius: var(--border-radius-sm);
+    color: var(--text-muted);
+    transition: var(--transition);
+    font-size: var(--font-size-base);
+    line-height: 1;
+}
+
+.btn-icon:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
 /* Уведомления */
 .toast-container {
     position: fixed;
